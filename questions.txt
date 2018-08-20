@@ -1,0 +1,91 @@
+Partner1:
+Name: Jiaqi Fan
+PID: A12584051
+Partner2:
+Name: Xuanru Zhu
+PID: A91064234
+Date: 1/20/2017
+//This is the file that answer the questions.
+
+Q1: What are all the files that are created when I type 'make bst' for the first time?
+
+A1: BSTInt.o, BSTNodeInt.o, testBST.o, and bst are the four files that are created when I type 'make bst' for the first time.
+
+Q2: In the file BSTInt.cpp, remove the name scope from the insert function. That is, change the function header from
+bool BSTInt::insert(int item)
+to
+bool insert(int item)
+Copy and paste the error that results when you now compile the code into your questions.txt file, and then explain what the error means 
+and why it occurs.
+
+A2:
+g++  	 -g -Wall -std=c++11 -c BSTInt.cpp
+BSTInt.cpp: In function 'bool insert(int)':
+BSTInt.cpp:25:8: error: 'root' was not declared in this scope
+   if (!root) {
+        ^
+BSTInt.cpp:27:7: error: 'isize' was not declared in this scope
+     ++isize;
+       ^
+BSTInt.cpp:31:22: error: 'root' was not declared in this scope
+   BSTNodeInt* curr = root;
+                      ^
+BSTInt.cpp:56:5: error: 'isize' was not declared in this scope
+   ++isize;
+     ^
+make: *** [BSTInt.o] Error 1
+
+This error means the function 'bool insert(int)' cannot find the declaration of the 'root' and 'isize'. The reason is because we remove 
+the name scope from the insert function. So, the link between the header file BSTInt.h and the cpp file BSTInt.cpp is lost. So, the 
+function cannot find the definition of the two variables 'root' and 'isize'.
+
+Q3: In a sentence or two, describe the bug in the code. What function was it is, and what was it?
+
+A3: The Bug is in function 'insert'. When the left or right child is NULL while the item wanna keep going to the another way(Not the 
+NULL way), inserting the next element will replace the former element inserted that will cause the former element can not be find by 
+the 'find' method. Because the while loop breaks as long as the left or right child is NULL. However, this is not the case, because the 
+item may want to keep going to the right while the left child is NULL. So it will replace the right child due to the while check 
+condition making the while loop breaks. And then insert(replace) in the right child spot(which is shouldn't) in the following insertion 
+code.
+
+Q4:
+A4: First we decided to give a look of the original code in BSTInt.cpp both function 'insert' and 'find'. we walk through the logic and
+line by line. we both think that 'find' method is find but there is something wrong with the insert method. However, we could not
+detect the exactly bug. Therefore, we went to write test case for insert and find. we considere all the edge cases for BST. according 
+to our knowledge from cse 12 we come with with many edge case test. Those edge cases are finding elements in empty tree, insert 
+dupilicate element, find something that does not exist in the tree. After we wrote several test we find out that after inserting 1, 2, 
+3, 4, 5 we could not find 2 in the BST. therefore, when inserting there is problem that 2 got overridden or in the wrong position. Then 
+we look at the find and insert method again, we found that find's code is ok, but the insert code is not. We try to graph the tree, and 
+insert 1, 2, 3, 4, 5 by ourself, and then we found that every time, when the left child is NULL, it always gonna stop and insert at the 
+right, no matter if the right child has somthing on it. So, it will keep replacing the right child, so, the logic of the insertion is 
+wrong. The reason of the wrongness of the code is explained in Q3.
+
+Q5: Look at header for the insert method in the BST.hpp and compare it to the header of the insert method in BSTInt.h. For each class 
+state whether the insert method passes its argument by value or by reference. Explain why each method probably uses the method that it 
+uses (i.e. if pass by value, explain why not pass by reference, and if pass by reference, explain why not pass by value).
+
+A5: For the insert method in the BSTInt.h, it passes its argument by value. And, for the insert method in BST.hpp, it passes its 
+argument by reference. The reason is when passed argument by value, C++ makes a copy of that and then passed in. So, for the BSTInt.h, 
+the method know that it gonna passed by an Int, and it is only 4 bytes, it is acceptable for making a 4 bytes copy and passed in. 
+However, for BST.hpp, the method doesn't know what kind of data gonna passed in, and how big is that data be. If the data is too big 
+and passed by value, it would use a large space to create that copy, so, in this case, for the insert method in BST.hpp, it passes its 
+argument by reference which is just a reference and won't make a copy of that data and won't take so much memory space.
+
+Q6: Which input file produces taller trees (sorted or random)? 
+
+A6: the sorted file(actors_sorted.txt) produces taller trees.
+
+Q7: Research on your own the height you would expect for the tree produced by the sorted input and for the tree produced by the random input.
+Give the approximate height you would expect for each tree based on the size of the tree, N. Then build the tree for different sizes of sorted
+and randomly ordered input, report your results, and comment on whether what you see matches your expectations. 
+Be sure to cite your source for the heights you expect.
+
+For sorted input, the expected height would be N-1. For random input, the height of the tree should approximately be
+(1/n)*D(n) which D(n) is the function that is the expected total depth among ALL BSTs with n nodes.
+source citation: https://stepik.org/lesson/BST-Average-Case-Time-Complexity-31698/step/4?course=Data-Structures-(CSE-100)&unit=11882
+source file: actors100.txt Input size: 15
+Height for this: 6, 6, 7, 6. These are around 6.
+Our approximate height calculated by the formula is 4.08 which is a little bit less than the actual.
+source file: actors_sorted.txt Input size: All of those which is 11794
+Height for this: 11793, which is expected as N-1.
+
